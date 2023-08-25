@@ -2,12 +2,13 @@ import "./CalculatorForm.css";
 import { useState } from "react";
 
 const CalculatorForm = (props) => {
-  const [userInput, setUserInput] = useState({
-		enteredCurrentSavings:"",
-		enteredYearlyContribution:"",
+  const initialUserInput = {
+		enteredCurrentSavings: "",
+		enteredYearlyContribution: "",
 		enteredExpectedInterest: "",
     enteredInvestmentDuration: ""
-	});
+  }
+  const [userInput, setUserInput] = useState(initialUserInput);
 
   const currentSavingsHandler = (event) => {
 		setUserInput({
@@ -39,34 +40,39 @@ const CalculatorForm = (props) => {
 
   const calculateHandler = event => {
     event.preventDefault();
-    const investmentData = {
-			currentSavings: parseInt(userInput.enteredCurrentSavings),
-			yearlyContribution: parseInt(userInput.enteredYearlyContribution),
-			expectedInterest: (userInput.enteredExpectedInterest / 100),
-      investmentDuration: parseInt(userInput.enteredInvestmentDuration)
-		}
-    console.log(investmentData);
-    // Should be triggered when form is submitted
-    // You might not directly want to bind it to the submit event on the form though...
+			let currentSavings = +userInput.enteredCurrentSavings;
+			const yearlyContribution = +userInput.enteredYearlyContribution;
+			const expectedInterest = +userInput.enteredExpectedInterest / 100;
+      const investmentDuration = +userInput.enteredInvestmentDuration;
 
+    if (
+      isNaN(currentSavings) ||
+      isNaN(yearlyContribution) ||
+      isNaN(expectedInterest) ||
+      isNaN(investmentDuration)
+    ) { return };
+
+    const initialInvestment = +userInput.enteredCurrentSavings;
     const yearlyData = []; // per-year results
-    let savingsEndofYear = 0;
 
-    // The below code calculates yearly results (total savings, interest etc)
-    for (let i = 0; i < investmentData.investmentDuration; i++) {
-      const yearlyInterest = investmentData.currentSavings * investmentData.expectedInterest;
-      savingsEndofYear += investmentData.currentSavings + yearlyInterest + investmentData.yearlyContribution;
+    for (let i = 0; i < investmentDuration; i++) {
+      const yearlyInterest = currentSavings * expectedInterest;
+      currentSavings += yearlyInterest + yearlyContribution;
       yearlyData.push({
-        // feel free to change the shape of the data pushed to the array!
         year: i + 1,
         yearlyInterest: yearlyInterest,
-        savingsEndOfYear: savingsEndofYear,
-        yearlyContribution: investmentData.yearlyContribution,
+        savingsEndOfYear: currentSavings,
+        yearlyContribution: yearlyContribution,
       });
     }
-    console.log(yearlyData);
-    // do something with yearlyData ...
+    props.onSaveYearlyData(yearlyData);
+    props.onSaveInitialInvestment(initialInvestment);
   };
+
+  const resetHandler = () => {
+    setUserInput(initialUserInput);
+    props.onReset();
+  }
 
   return (
       <form className="form" onSubmit={calculateHandler}>
@@ -93,7 +99,7 @@ const CalculatorForm = (props) => {
         </p>
       </div>
       <p className="actions">
-        <button type="reset" className="buttonAlt">
+        <button type="reset" onClick={resetHandler} className="buttonAlt">
           Reset
         </button>
         <button type="submit" className="button">

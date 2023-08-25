@@ -1,39 +1,34 @@
-import logo from './assets/investment-calculator-logo.png';
+import { useState } from 'react';
 import CalculatorForm from './components/Calculator/CalculatorForm';
+import Header from './components/Header/Header';
+import Result from './components/Result/Result';
 
 function App() {
+  const [data, setData] = useState(undefined);
+  const [investment, setInvestment] = useState(undefined);
+
+  const yearlyDataHandler = (enteredData) => {
+    setData(enteredData);
+  }
+
+  const initialInvestmentHandler = (initialInvestment) => {
+    setInvestment(initialInvestment);
+  }
+
+  const resetResult = () => {
+    setInvestment(undefined);
+    setData(undefined);
+  }
+
   return (
     <div>
-      <header className="header">
-        <img src={logo} alt="logo" />
-        <h1>Investment Calculator</h1>
-      </header>
+      <Header />
 
-      <CalculatorForm />
+      <CalculatorForm onSaveYearlyData={yearlyDataHandler} onSaveInitialInvestment={initialInvestmentHandler} onReset={resetResult} />
 
       {/* Todo: Show below table conditionally (only once result data is available) */}
       {/* Show fallback text if no data is available */}
-
-      <table className="result">
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Total Savings</th>
-            <th>Interest (Year)</th>
-            <th>Total Interest</th>
-            <th>Invested Capital</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>YEAR NUMBER</td>
-            <td>TOTAL SAVINGS END OF YEAR</td>
-            <td>INTEREST GAINED IN YEAR</td>
-            <td>TOTAL INTEREST GAINED</td>
-            <td>TOTAL INVESTED CAPITAL</td>
-          </tr>
-        </tbody>
-      </table>
+      {data ? <Result yearlyData={data} initialInvestment={investment} /> : <p>No investment calculated yet.</p>}
     </div>
   );
 }
