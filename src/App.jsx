@@ -26,9 +26,7 @@ function App() {
 
       <CalculatorForm onSaveYearlyData={yearlyDataHandler} onSaveInitialInvestment={initialInvestmentHandler} onReset={resetResult} />
 
-      {/* Todo: Show below table conditionally (only once result data is available) */}
-      {/* Show fallback text if no data is available */}
-      {data ? <Result yearlyData={data} initialInvestment={investment} /> : <p>No investment calculated yet.</p>}
+      {data ? <Result yearlyData={data} initialInvestment={investment} /> : <p style={{textAlign: "center"}}>No investment calculated yet.</p>}
     </div>
   );
 }

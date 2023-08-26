@@ -1,4 +1,4 @@
-import "./Result.css";
+import classes from "./Result.module.css";
 
 const Result = props => {
   const formatter = new Intl.NumberFormat('en-US', {
@@ -9,7 +9,7 @@ const Result = props => {
   });
 
   return (
-    <table className="result">
+    <table className={classes.result}>
       <thead>
         <tr>
           <th>Year</th>
@@ -21,7 +21,7 @@ const Result = props => {
       </thead>
       <tbody>
       {props.yearlyData.map(yearData => (
-        <tr>
+        <tr key={yearData.year}>
           <td>{yearData.year}</td>
           <td>{formatter.format(yearData.savingsEndOfYear)}</td>
           <td>{formatter.format(yearData.yearlyInterest)}</td>
